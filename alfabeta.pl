@@ -8,7 +8,7 @@
 alfabeta(Ei,terminou) :- terminal(Ei).
 
 alfabeta(Ei,Opf) :- 
-	findall(Vc-Op, (oper(Ei,x,Op,Es), alfabeta_min(Es,Vc,1,-10000,10000)), L),
+	findall(Vc-Op, (op1(Ei,Op,Es), alfabeta_min(Es,Vc,1,-10000,10000)), L),
 	escolhe_max(L,Opf).
 
 % se um estado é terminal o valor é dado pela função de utilidade
@@ -19,7 +19,7 @@ alfabeta_min(Ei,Val,_,_,_) :-
 alfabeta_min(Ei,Val,P,Alfa,Beta) :- 
 	P1 is P+1, jogador(P1,J),
 	V is 10000,
-	findall(Es, oper(Ei,J,_,Es), L),
+	findall(Es, op1(Ei,J,Es), L),
 	processa_lista_min(L, P1, V, Alfa, Beta, Val), !.
 
 processa_lista_min([], _, V, _, _, V).
@@ -38,7 +38,7 @@ alfabeta_max(Ei,Val,_,_,_) :-
 alfabeta_max(Ei,Val,P,Alfa,Beta) :- 
 	P1 is P+1, jogador(P1,J),
 	V is -10000,
-	findall(Es, oper(Ei,J,_,Es), L),
+	findall(Es, op1(Ei,J,_,Es), L),
 	processa_lista_max(L, P1, V, Alfa, Beta, Val), !.
 
 processa_lista_max([], _, V, _, _, V).
