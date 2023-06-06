@@ -1,20 +1,19 @@
-/*estado_inicial(e(
-    [[v,v,v,v,v,v],
-     [v,v,v,v,v,v],
-     [v,v,v,v,v,v],
-     [v,v,v,v,v,v],
-     [x,v,v,v,v,v],
-     [x,v,v,v,v,v],
-     [x,v,v,v,v,v]])).*/
-estado_inicial(e(
-   [[v,v,v,v,v,v,v],
-    [v,v,v,v,v,v,v],
-    [v,v,v,v,v,v,v],
-    [v,v,v,v,v,v,v],
-    [x,v,v,v,v,v,v],
-    [x,v,v,v,v,v,v]])).
+estado_inicial(e([v,v,v,v,v,v,v,
+                  v,v,v,v,v,v,v,
+                  v,v,v,v,v,v,v,
+                  w,v,v,v,v,v,v,
+                  w,v,v,v,v,v,v,
+                  w,b,b,b,v,v,v], w
+                )).
 
-terminal(E):- linhas(E,_); colunas(E,_); diagonal(E,_); cheio(E).
+valor(E,V,P):-terminal(E),
+    X is P mod 2,
+    (X== 1,V=1;X==0,V= -1). 
+
+terminal(E):- dividir_em_linhas(E,SL),E = e(L,J),(linhas(e(SL),J);
+             colunas(e(SL),J); diagonal(e(SL),J); cheio(L)).
+
+cheio(L):- \+member(v,L).
 
 linhas(e([]),_):- fail.
 linhas(e([H|T]),X) :- linhas(H,X); linhas(e(T),X).
@@ -37,48 +36,27 @@ diagonal([_,_,_,X|_],[_,_,X|_],[_,X|_],[X|_],X):- X \= v.
 diagonal([_|A],[_|B],[_|C],[_|D],X):- diagonal(A,B,C,D,X).
 diagonal([],[],[],[],_):- fail.
 
-cheio(e([A,B,C,D,E,F])) :- append(A, B, AB), append(C, D, CD), append(E, F, EF), append(AB,CD,L4), append(L4,EF, ALL), \+ member(v, ALL).
-   
+dividir_em_linhas(e(L,_), S) :- divide(L,S).
+divide([],[]).
+divide([V1,V2,V3,V4,V5,V6,V7|T],[[V1,V2,V3,V4,V5,V6,V7]|T1]):- divide(T,T1).
 
-valor(E,1,P) :- terminal(E), R is P mod 2, R=1.
-valor(E,-1,P) :- terminal(E), R is P mod 2, R=0.
-valor(_,0,_).
 /*
-igual(X,X).
+ terminal(e(  [v,v,v,v,v,v,v,
+                 w,w,w,w,v,v,v,
+                 v,v,v,v,v,v,v,
+                 v,v,v,v,v,v,v,
+                 v,v,v,v,v,v,v,
+                 v,v,v,v,v,v,v],J
+                )).
+*/
+inv(w,b).
+inv(b,w).
 
-verificar(e([]),e([]),_,_).
-verificar(e([HI|TI]), e([HF|TF]), (C,J), LA) :- C@<8,(igual(J, x); igual(J, o)), verificar(HI,HF,(C,J), LA), LAA is LA+1,verificar(e(TI), e(TF), (C,J), LAA).
-verificar([],[],_,_).
-verificar(CI,CF,(C, J),C ) :- ver_coluna(CI, CF, J).
-verificar(CC,CC,(CA, _),C ) :- CA \= C.
+op1(e(L,J),(C),e(L1,J1)) :- 
+    inv(J,J1), 
+    subs(v,J,L,L1,1,C).
 
-vercoluna([],_,_).
-ver_coluna([v|T], [HF|T],J):- igual(HF,J), (igual(TI, []); \+ member(v, TI)).
-ver_coluna([H|TI], [H|TF],J):- ver_coluna(TI, TF, J).
-
-
-op1(EI, J, EF) :-  verificar(EI, EF, J, 1).*/
-
-igual(X, X).
-%verifica(EI,EF,LA,(LP,CP),J):- 
-verifica(e([]),e([]),_,_).
-verifica(e([HI|TI]),e([HF|TF]),LA,(LP,CP,J)):- LP @< 7, CP @< 8, verifica(HI, HF,(LA,1),(LP,CP,J)), LAA is LA + 1, verifica(e(TI),e(TF),LAA,(LP,CP,J)).
-%verifica(LI, LF, (LA,CA),(LP,CP),J)
-verifica([],[],_,_,_).
-verifica([HI|TI],[HF|TF],(L,C),(L,C,J)) :- igual(HI,v),igual(HF,J), CA is C+1, verifica(TI,TF,(L,CA),(L,C,J)).
-verifica([H|TI],[H|TF],(LA,C),(L,C,J)) :-  LA \= L, ((LA < L,H = v); H \= v), CA is C + 1, verifica(TI,TF,(LA,CA),(L,C,J)).
-verifica([H|TI],[H|TF],(LA,CA),(L,C,J)) :- CA \= C, CAA is CA +1, verifica(TI, TF, (LA,CAA),(L, C,J)).
-
-%op1(EI, J, EF) :-  verifica(EI,EF,1,J).
-
-op1(EI, J, EF) :- verifica(EI,EF,1,J).
-/*
-verificar(e(      
-    [[v,v,v,v,v,v,v],
-     [o,v,v,v,v,v,v],
-     [v,v,v,v,v,v,v],
-     [v,v,v,v,v,v,v],
-     [v,v,v,v,v,v,v],
-     [v,v,v,v,v,v,v]]),X, (2, o),1).
-
-    */
+subs(A,J,[A|R],[J|R],C,C).
+subs(A,J,[B|R],[B|S],N,C) :- 
+        M is N+1, 
+        subs(A,J,R,S,M,C).
