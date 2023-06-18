@@ -6,6 +6,7 @@ estado_inicial(e([	v,v,v,v,v,v,v,
 					v,v,v,v,v,v,v, 
 					v,v,v,v,v,v,v], w)).
 */
+/*
 estado_inicial(e([	v,v,v,v,v,v,v, 
     v,v,v,v,v,v,v, 
     w,b,w,v,w,b,w, 
@@ -13,15 +14,15 @@ estado_inicial(e([	v,v,v,v,v,v,v,
     b,w,b,w,b,w,b, 
     b,w,b,w,b,w,b], w)).
 
-/*
+*/
 estado_inicial(e([  v,v,v,v,b,w,b, 
                     w,b,v,w,w,b,w, 
                     b,w,b,b,w,b,w, 
-                    w,b,w,v,w,b,w, 
-                    b,w,b,w,b,w,b, 
+                    w,b,w,b,w,b,w, 
+                    b,w,b,v,b,w,b, 
                     w,b,w,b,w,b,w], w)).
 
-*/
+
 valor(e(L,_),0,P):-  \+ member(v,L),!.
 valor(E,V,P):- 
         terminal(E),
